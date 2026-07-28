@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 // Event — отражает таблицу events
 type Event struct {
@@ -52,4 +56,11 @@ type BookSeatResponse struct {
 type EventDetailResponse struct {
 	Event    Event     `json:"event"`
 	Bookings []Booking `json:"bookings,omitempty"` // список броней
+}
+
+type User struct {
+	ID          uuid.UUID `json:"id"`
+	Email       string    `json:"email"`
+	TelegramUse string    `json:"telegram_use"`
+	CreatedAt   time.Time `json:"created_at"`
 }
