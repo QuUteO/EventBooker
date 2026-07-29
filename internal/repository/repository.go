@@ -214,3 +214,15 @@ func (r *EventRepository) ListBookingsByEventID(ctx context.Context, eventID uui
 
 	return bookings, nil
 }
+
+func (r *EventRepository) CancelExpiredBookings(ctx context.Context) (int64, error) {
+	query := "WITH expired_bookings AS (UPDATE bookings SET status = 'canceled' WHERE status = 'pending' AND expires_at < NOW() RETURNING event_id), updated_events AS (UPDATE events SET available_seats = available_seats + 1 WHERE id IN (SELECT event_id FROM expired_bookings)) SELECT COUNT(*) FROM expired_bookings;"
+
+	var count int64
+	err := r.conn.QueryRow(ctx, query).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("репозиторий: ошибка скана кол-во отменений %w", err)
+	}
+
+	return count, nil
+}
