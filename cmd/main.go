@@ -2,6 +2,7 @@ package main
 
 import (
 	"EventBooker/internal/config"
+	"EventBooker/internal/repository"
 	"fmt"
 	"os"
 	"time"
@@ -40,5 +41,7 @@ func main() {
 		log.Error("Failed to connect to PostgreSQL:", err)
 	}
 	defer pg.Close()
+
+	_ = repository.New(pg)
 
 }
