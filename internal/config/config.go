@@ -7,8 +7,9 @@ import (
 )
 
 type Config struct {
-	Env string `yaml:"env"`
-	DSN string `yaml:"dsn"`
+	Env       string `yaml:"env"`
+	DSN       string `yaml:"dsn"`
+	ServeAddr string `yaml:"address"`
 }
 
 func New(path string) (*Config, error) {
