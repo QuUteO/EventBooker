@@ -43,9 +43,11 @@ func (h *Handler) InitRoutes(ginMode string) *ginext.Engine {
 	// Подключаем стандартные мидлвары через ginext
 	engine.Use(ginext.Logger(), ginext.Recovery())
 
+	engine.StaticFile("/", "./web/index.html")
+
 	v1 := engine.Group("/api/v1")
 	{
-		// Users
+		// Users (сохраняем для управления профилем и списком броней пользователя)
 		users := v1.Group("/users")
 		{
 			users.POST("", h.RegisterUser)
@@ -53,19 +55,19 @@ func (h *Handler) InitRoutes(ginMode string) *ginext.Engine {
 			users.GET("/:id/bookings", h.GetUserBookings)
 		}
 
-		// Events
+		// Events (согласно заданному контракту)
 		events := v1.Group("/events")
 		{
-			events.POST("", h.CreateEvent)
-			events.GET("", h.ListUpcomingEvents)
-			events.GET("/:id", h.GetEventDetails)
-			events.POST("/:id/book", h.BookSeat)
+			events.POST("", h.CreateEvent)                // POST /events
+			events.GET("", h.ListUpcomingEvents)          // GET /events (для списка на главной)
+			events.GET("/:id", h.GetEventDetails)         // GET /events/{id}
+			events.POST("/:id/book", h.BookSeat)          // POST /events/{id}/book
+			events.POST("/:id/confirm", h.ConfirmBooking) // POST /events/{id}/confirm
 		}
 
-		// Bookings
+		// Bookings (для отмены конкретной брони)
 		bookings := v1.Group("/bookings")
 		{
-			bookings.POST("/:id/confirm", h.ConfirmBooking)
 			bookings.POST("/:id/cancel", h.CancelBooking)
 		}
 	}
